@@ -9,27 +9,22 @@ module ForwardEuler where
 import Graphics.Rendering.Chart.Easy
 import Graphics.Rendering.Chart.Backend.Cairo
 
-f :: Float -> Float -> Float
-f x t = 2 - x
-
-
 -- Using two-point formula to approximate the derivative at this point
-derivative :: (Float -> Float -> Float) -> Float -> Float -> Float
-derivative func x h = y2 - y1 `div` (2 * h)
-                      where y2 = func $ x-h
-                            y1 = func $ x+h
+derivative :: (Float -> Float -> Float) -> Float -> Float -> Float -> Float
+derivative f x t h = (y2 - y1) / (2 * h)
+                     where y2 = f (x+h) t
+                           y1 = f (x-h) t
+
+-- Newton's method for functions of 1 variable but relies on a constant input
+-- because of the nature of dx/dt = f(x(t), t)
+newton :: (Float -> Float -> Float) -> Float -> Float -> Float -> Float -> Float
+newton f x t tol h = let eval = f x t in
+                       if eval < tol
+                          then x
+                               else newton f x0 t tol h
+                                    where x0 = x - f x t / derivative f x t h
 
 
--- Newton's method to solve f(x) = 0!
-newtonMethod :: (Float -> Float -> Float) -> Float -> Float -> Float
-newtonMethod func g tol = if x < tol
-                          then g
-                          else g - x `div` d
-                          where x = func $ g
-                                d = derivative func g .0001
-
-
--- forwardEuler method to use on a dx/dt = f(x(t), t)
 forwardEuler :: (Float -> Float -> Float) -> Float -> Float ->
                  Float -> Int -> [(Float, Float)]
 forwardEuler func h t x s = if s > 0
