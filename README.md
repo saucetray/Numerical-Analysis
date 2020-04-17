@@ -4,6 +4,10 @@ Numerical Stuff in Haskell and Matlab
 
 ## Folders
 
+### Haskell
+
+Haskell is recently added! Simple ODE solvers in there (forwardEuler and backwardEuler)
+
 =======
 # Numerical Analysis and Exploration
 
